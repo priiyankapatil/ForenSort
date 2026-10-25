@@ -1,0 +1,13 @@
+{
+  "dataset": "CSFD-10k",
+  "samples": 100,
+  "selection": "evenly_spaced",
+  "device": "cpu",
+  "checkpoint": "outputs\\checkpoints\\baseline_best.pt",
+  "spearman_forensort_score_vs_mos": 0.6069726972697269,
+  "pearson_forensort_score_vs_mos": 0.6408525931496337,
+  "mos_min": 24.196201109776872,
+  "mos_max": 84.36737357970546,
+  "forensort_score_min": 8.9775390625,
+  "forensort_score_max": 52.31982421875
+}

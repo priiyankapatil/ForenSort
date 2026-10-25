@@ -1,0 +1,18 @@
+# Restricted dataset files - never commit (see plan section 4.5)
+data/raw/*
+data/processed/*
+data/ebts/latent/*
+external_data/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+outputs/checkpoints/*
+!outputs/checkpoints/.gitkeep
+data/manifests/*.csv
+
+__pycache__/
+*.pyc
+.venv/
+.ipynb_checkpoints/
+
+colab_upload/
+outputs/figures/loader_check.png

@@ -1,0 +1,25 @@
+# Combined experiment: baseline weighting plus an ordinal distance penalty.
+# Quality levels are ordered, so nearby mistakes should cost less than distant ones.
+name: ordinal
+seed: 42
+data:
+  train_csv: data/manifests/train.csv
+  val_csv: data/manifests/val.csv
+  test_csv: data/manifests/test.csv
+  lffs_root: data/ebts/latent/lffs
+  size: 512
+  stride: 8
+  num_workers: 4
+train:
+  epochs: 30
+  batch_size: 16
+  lr: 0.0003
+  weight_decay: 0.0001
+  freeze_epochs: 1
+  class_weight_power: 0.5
+  ordinal_weight: 0.25
+  select_metric: macro_f1
+  patience: 7
+  limit_train: 0
+  limit_val: 0
+out_dir: outputs_ordinal

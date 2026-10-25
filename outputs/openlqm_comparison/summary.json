@@ -1,0 +1,13 @@
+{
+  "samples": 1565,
+  "valid_openlqm_samples": 1563,
+  "openlqm_failures": 2,
+  "device": "cpu",
+  "checkpoint": "outputs\\checkpoints\\baseline_best.pt",
+  "openlqm": "C:\\Program Files\\OpenLQM\\bin\\openlqm.exe",
+  "spearman": {
+    "openlqm_oq_vs_expert_mean_quality": 0.3957287588183948,
+    "forensort_score_vs_expert_mean_quality": 0.8362653311517722,
+    "openlqm_oq_vs_forensort_score": 0.470877238051473
+  }
+}

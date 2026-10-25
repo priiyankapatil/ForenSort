@@ -1,0 +1,283 @@
+[
+  {
+    "case": "real_00002334_3_X_0362_IN_D800_1000PPI_8BPC_1CH_LP07-1_1",
+    "input_shape": [
+      256,
+      256
+    ],
+    "pred_shape": [
+      64,
+      64
+    ],
+    "pred_levels": [
+      940,
+      3156,
+      0,
+      0,
+      0,
+      0
+    ],
+    "pred_mean": 0.771,
+    "status": "PASS",
+    "truth_levels": [
+      765,
+      3331,
+      0,
+      0,
+      0,
+      0
+    ],
+    "accuracy": 0.883,
+    "mae": 0.117
+  },
+  {
+    "case": "real_00002558_4B_X_8721_IN_D800_1000PPI_8BPC_1CH_LP05-1_1",
+    "input_shape": [
+      2142,
+      1738
+    ],
+    "pred_shape": [
+      64,
+      64
+    ],
+    "pred_levels": [
+      2540,
+      1267,
+      267,
+      14,
+      0,
+      8
+    ],
+    "pred_mean": 0.46,
+    "status": "PASS",
+    "truth_levels": [
+      1502,
+      1826,
+      0,
+      0,
+      0,
+      0
+    ],
+    "accuracy": 0.826,
+    "mae": 0.174
+  },
+  {
+    "case": "real_00002535_1E_R_L01_BP_S24_1000PPI_8BPC_1CH_LP02-1_1",
+    "input_shape": [
+      462,
+      422
+    ],
+    "pred_shape": [
+      64,
+      64
+    ],
+    "pred_levels": [
+      3653,
+      443,
+      0,
+      0,
+      0,
+      0
+    ],
+    "pred_mean": 0.108,
+    "status": "PASS",
+    "truth_levels": [
+      3457,
+      255,
+      0,
+      0,
+      0,
+      0
+    ],
+    "accuracy": 0.949,
+    "mae": 0.051
+  },
+  {
+    "case": "real_00002593_6D_X_030_WT_D800_1000PPI_8BPC_1CH_LP12-1_1",
+    "input_shape": [
+      761,
+      843
+    ],
+    "pred_shape": [
+      64,
+      64
+    ],
+    "pred_levels": [
+      675,
+      269,
+      481,
+      335,
+      1918,
+      418
+    ],
+    "pred_mean": 2.929,
+    "status": "PASS",
+    "truth_levels": [
+      384,
+      276,
+      586,
+      1043,
+      1276,
+      147
+    ],
+    "accuracy": 0.51,
+    "mae": 0.543
+  },
+  {
+    "case": "real_00002312_4F_X_504_IN_D800_1000PPI_8BPC_1CH_LP16-1_1",
+    "input_shape": [
+      710,
+      710
+    ],
+    "pred_shape": [
+      64,
+      64
+    ],
+    "pred_levels": [
+      2215,
+      1881,
+      0,
+      0,
+      0,
+      0
+    ],
+    "pred_mean": 0.459,
+    "status": "PASS",
+    "truth_levels": [
+      2800,
+      889,
+      407,
+      0,
+      0,
+      0
+    ],
+    "accuracy": 0.737,
+    "mae": 0.263
+  },
+  {
+    "case": "blank_white",
+    "input_shape": [
+      512,
+      512
+    ],
+    "pred_shape": [
+      64,
+      64
+    ],
+    "pred_levels": [
+      2180,
+      1428,
+      488,
+      0,
+      0,
+      0
+    ],
+    "pred_mean": 0.587,
+    "status": "PASS"
+  },
+  {
+    "case": "blank_black",
+    "input_shape": [
+      512,
+      512
+    ],
+    "pred_shape": [
+      64,
+      64
+    ],
+    "pred_levels": [
+      2202,
+      1783,
+      0,
+      0,
+      44,
+      67
+    ],
+    "pred_mean": 0.56,
+    "status": "PASS"
+  },
+  {
+    "case": "tiny_1x1",
+    "input_shape": [
+      1,
+      1
+    ],
+    "pred_shape": [
+      64,
+      64
+    ],
+    "pred_levels": [
+      2142,
+      1954,
+      0,
+      0,
+      0,
+      0
+    ],
+    "pred_mean": 0.477,
+    "status": "PASS"
+  },
+  {
+    "case": "wide_32x1024",
+    "input_shape": [
+      32,
+      1024
+    ],
+    "pred_shape": [
+      64,
+      64
+    ],
+    "pred_levels": [
+      2181,
+      1212,
+      647,
+      56,
+      0,
+      0
+    ],
+    "pred_mean": 0.653,
+    "status": "PASS"
+  },
+  {
+    "case": "noise_300x700",
+    "input_shape": [
+      300,
+      700
+    ],
+    "pred_shape": [
+      64,
+      64
+    ],
+    "pred_levels": [
+      2275,
+      1080,
+      610,
+      131,
+      0,
+      0
+    ],
+    "pred_mean": 0.657,
+    "status": "PASS"
+  },
+  {
+    "case": "small_16x16",
+    "input_shape": [
+      16,
+      16
+    ],
+    "pred_shape": [
+      64,
+      64
+    ],
+    "pred_levels": [
+      4030,
+      66,
+      0,
+      0,
+      0,
+      0
+    ],
+    "pred_mean": 0.016,
+    "status": "PASS"
+  }
+]

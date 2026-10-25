@@ -1,117 +1,161 @@
 # ForenSort
 
-CNN-based latent fingerprint quality assessment (research prototype, advisory only).
-Not for identification or forensic conclusions. See the project plan PDF for full scope.
+ForenSort is a research prototype that estimates **regional quality in latent
+fingerprint images** using a convolutional neural network. It predicts a
+quality level for each image region, then aggregates those predictions into an
+advisory image score that can help prioritize images for human review.
 
-## Status
-- [x] Phase 1 scaffold + dataset decision template (`reports/dataset_decision.md`)
-- [x] Phase 2 dataset inspection (`src/audit_dataset.py`)
-- [x] Phase 3 loader / baseline
-- [x] Phase 4 training (baseline trained on Colab; best validation macro-F1 0.582, QWK 0.813)
-- [x] Phase 5 evaluation (test accuracy 0.745, QWK 0.822, MAE 0.29)
-- [x] Phase 6 Streamlit app (`app/streamlit_app.py`)
-- [x] Phase 6b model improvement experiment (`configs/ordinal.yaml`) — tested; baseline retained
-- [x] Phase 7 OpenLQM comparison (1,563 valid results; 2 OpenLQM timeouts)
+> **Important:** ForenSort is advisory research software. It does not identify
+> people, match fingerprints, or provide forensic conclusions. Its predictions
+> must not replace qualified human examination.
 
-## Setup
-```
+## What the project does
+
+ForenSort:
+
+1. Reads a grayscale latent fingerprint image.
+2. Divides the image into regions.
+3. Predicts a quality level from **0 to 5** for each region.
+4. Calculates average quality, usable-region coverage, confidence, and an
+   advisory image score.
+5. Displays a regional quality map and lets users review multiple images.
+
+The model is trained on expert regional quality annotations from NIST SD 302h.
+The repository contains the complete model architecture, data pipeline,
+training code, evaluation code, and Streamlit interface.
+
+## Web application
+
+The live website has **not been deployed yet**.
+
+To run the application locally:
+
+```powershell
 python -m venv .venv
 .venv\Scripts\activate
 pip install -r requirements.txt
-```
-Training should run on Google Colab (no local GPU).
-
-## Local review app
-
-After placing the trained checkpoint at `outputs/checkpoints/baseline_best.pt`:
-
-```
 streamlit run app/streamlit_app.py
 ```
 
-The app accepts PNG, JPG, BMP, TIFF, and NIST `.lffs` transactions. For LFFS
-files it extracts the embedded image automatically and can show the embedded
-expert quality map for reference. It displays a regional quality overlay and
-is advisory only; it does not identify people or support forensic conclusions.
-It also reports model confidence and warns about low-contrast or uncertain
-inputs. Confidence is a model score, not a guarantee that a prediction is
-correct.
-Multiple files can be uploaded together. The app sorts them by an advisory
-image score based on average regional quality and usable-region coverage, then
-lets you inspect each prediction individually. High/Medium/Low categories are
-review-order suggestions, not forensic conclusions.
+Then open the local address shown by Streamlit, usually:
 
-### Example test
+<http://localhost:8501>
 
-The app was manually tested with a held-out NIST LFFS sample. The model
-processed a 647 x 937 image and achieved 89.9% regional agreement with its
-embedded expert map, with a 0.10 average quality-level error. This is one
-example, not a replacement for the aggregate test results below.
+When a public deployment is available, its URL should be added here.
 
-The aggregate held-out test results were 74.5% accuracy, 0.581 macro-F1,
-0.822 quadratic weighted kappa, and 0.29 mean absolute quality-level error.
-Stress tests also covered blank, black, noisy, tiny, wide, and very large
-inputs; they completed without crashes. Synthetic inputs are not meaningful
-quality assessments and should be treated as out-of-distribution cases.
+## Model
 
-### Optional model improvement experiment
+The model is defined in [`src/model.py`](src/model.py). It uses:
 
-The baseline is kept unchanged. The bundled experiment keeps the successful
-baseline class weighting and adds an ordinal distance penalty, because quality
-levels 0-5 are ordered. This avoids the failed aggressive weighting experiment
-in `configs/high_quality.yaml` and does not overwrite baseline outputs.
+- A pretrained ResNet-18 encoder adapted for one-channel grayscale images.
+- A lightweight multi-scale decoder.
+- A six-class regional quality head.
+- Class-weighted cross-entropy to handle imbalanced quality levels.
+- Optional ordinal loss because quality levels are ordered.
 
+The trained checkpoint is intentionally not included in this repository because
+it is large and depends on restricted training data. Place a compatible
+checkpoint at:
+
+```text
+outputs/checkpoints/baseline_best.pt
 ```
+
+## Results
+
+### Held-out NIST test split
+
+The test split was kept separate from training and model selection:
+
+| Metric | Result |
+|---|---:|
+| Accuracy | 0.745 |
+| Macro-F1 | 0.581 |
+| Quadratic weighted kappa | 0.822 |
+| Mean absolute quality-level error | 0.289 |
+
+Performance is strongest on common quality levels. Rare high-quality regions
+are more difficult for the current model, so these results should be treated as
+baseline research results rather than production guarantees.
+
+### Independent CSFD-10k check
+
+An independent evaluation on 100 evenly spaced CSFD-10k images produced:
+
+- Spearman correlation with MOS: **0.607**
+- Pearson correlation with MOS: **0.641**
+
+This indicates a moderate relationship between ForenSort's advisory scores and
+the independent human-rated quality scores. A larger evaluation should be run
+before drawing stronger conclusions.
+
+## Repository structure
+
+```text
+app/                 Streamlit review application
+configs/             Training configurations
+notebooks/           Colab training notebook
+outputs/figures/     Example visualizations
+outputs/metrics/     Evaluation metrics and edge-case results
+reports/             Dataset and project reports
+scripts/             Packaging utilities
+src/model.py         Neural network architecture and losses
+src/dataset.py       Dataset loading and preprocessing
+src/train.py         Training entry point
+src/test.py          Held-out test evaluation
+src/inference.py     Inference helpers used by the app
+src/evaluate.py      Metric calculation
+src/evaluate_csfd10k.py  Independent CSFD-10k evaluation
+```
+
+## Training and evaluation
+
+Training is intended to run on Google Colab or another machine with a suitable
+GPU:
+
+```powershell
+python src/train.py configs/baseline.yaml
+python src/test.py configs/baseline.yaml outputs/checkpoints/baseline_best.pt
+```
+
+The optional ordinal experiment can be run with:
+
+```powershell
 python src/train.py configs/ordinal.yaml
 python src/test.py configs/ordinal.yaml outputs_ordinal/checkpoints/ordinal_best.pt
 ```
 
-Keep the experiment only if its test results improve the high-quality classes
-without causing an unacceptable drop in overall QWK or MAE.
+For the independent CSFD-10k check:
 
-The ordinal experiment was evaluated on the held-out test split:
-
-| Model | Accuracy | Macro-F1 | QWK | MAE |
-|---|---:|---:|---:|---:|
-| Baseline | 0.745 | 0.581 | 0.822 | 0.29 |
-| Ordinal | 0.743 | 0.577 | 0.820 | 0.29 |
-
-The baseline remains the selected model because the ordinal loss did not
-improve the aggregate test metrics.
-
-### OpenLQM comparison
-
-OpenLQM is used only as an external benchmark; it is not used as a training
-label. After installing the official Windows release, compare both systems on
-the same held-out test images:
-
-```
-python src/compare_openlqm.py configs/baseline.yaml outputs/checkpoints/baseline_best.pt
+```powershell
+python src/evaluate_csfd10k.py `
+  external_data/csfd10k/CSFD-images.zip `
+  external_data/csfd10k/im_names.txt `
+  external_data/csfd10k/mos.txt `
+  outputs/checkpoints/baseline_best.pt
 ```
 
-The script writes `outputs/openlqm_comparison/comparison.csv` and
-`outputs/openlqm_comparison/summary.json`. OpenLQM's OQ score and ForenSort's
-image score use different scales, so the comparison uses Spearman rank
-correlations rather than treating the raw scores as interchangeable.
+Use `--all` only when a complete evaluation is intended.
 
-On the 1,563 images with valid OpenLQM output, the rank correlations were:
+## Data and privacy
 
-| Comparison | Spearman correlation |
-|---|---:|
-| OpenLQM OQ vs expert mean quality | 0.396 |
-| ForenSort image score vs expert mean quality | 0.836 |
-| OpenLQM OQ vs ForenSort image score | 0.471 |
+The repository does **not** include restricted fingerprint images, raw dataset
+archives, `.lffs` files, or trained weights. Obtain the data through the
+appropriate official channels and place it in the local paths expected by the
+scripts. Do not upload restricted images or personal data to public
+repositories.
 
-Two images exceeded the 30-second OpenLQM timeout and were recorded as
-failures rather than stopping the benchmark. This comparison is specific to
-the NIST SD 302 test split and is not evidence that either system is
-universally better.
+## Limitations
 
-## Data
-Request NIST SD 302 via https://www.nist.gov/itl/iad/btg/nist-special-database-302 and place files under `data/raw/`.
-Raw data and manifests are git-ignored; never publish restricted images.
+- This is a research prototype, not a validated forensic product.
+- The independent CSFD-10k run currently uses a 100-image sample.
+- High-quality classes are underrepresented and have lower F1 scores.
+- The advisory score is not interchangeable with a standardized quality scale.
+- Predictions can be unreliable for unusual, blank, noisy, or out-of-distribution
+  images.
 
-## Audit
-```
-python src/audit_dataset.py data/raw/<subset> [--group-regex "<regex>"] [--write]
-```
+## License and dataset terms
+
+Dataset access, usage, and redistribution are subject to the terms of the
+respective dataset providers. Check those terms before downloading or sharing
+any data.
